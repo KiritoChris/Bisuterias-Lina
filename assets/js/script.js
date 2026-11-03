@@ -103,6 +103,13 @@ document.addEventListener("DOMContentLoaded", () => {
     img.loading = "lazy";
     img.onerror = () => { photo.style.background = "#f3e9e2"; img.style.display = "none"; };
 
+    img.style.cursor = "zoom-in";
+
+    img.addEventListener("click", event => {
+      event.stopPropagation();
+      openLightbox(product.image);
+    });
+
     const check = document.createElement("span");
     check.className = "select-check";
     check.setAttribute("aria-hidden", "true");
@@ -197,6 +204,37 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     syncSelectionUI();
   }
+
+  // ===== LIGHTBOX — VER PIEZA EN GRANDE =====
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImage = document.getElementById("lightbox-image");
+  const lightboxClose = document.getElementById("lightbox-close");
+
+  function openLightbox(src) {
+    if (!lightbox || !lightboxImage) return;
+    lightboxImage.src = src;
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeLightbox() {
+    if (!lightbox || !lightboxImage) return;
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    lightboxImage.src = "";
+    document.body.style.overflow = "";
+  }
+
+  lightboxClose?.addEventListener("click", closeLightbox);
+  lightbox?.addEventListener("click", event => {
+    if (event.target === lightbox) closeLightbox();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && lightbox && lightbox.classList.contains("open")) {
+      closeLightbox();
+    }
+  });
 
   if (grid) {
     filters.forEach(button => button.addEventListener("click", () => {
